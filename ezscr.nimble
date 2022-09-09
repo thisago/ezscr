@@ -13,3 +13,4 @@ binDir = "build"
 
 requires "nim >= 1.6.4"
 requires "nimscripter"
+requires "cligen"
