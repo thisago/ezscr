@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.2.0"
 author        = "Thiago Navarro"
 description   = "Easy Nimscript runner. Nim compiler not needed"
 license       = "MIT"
@@ -14,3 +14,4 @@ binDir = "build"
 requires "nim >= 1.6.4"
 requires "nimscripter"
 requires "cligen"
+requires "yaml"
