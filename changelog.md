@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.0.0 (Sep 9, 2022)
+
+- Added `run` command
+- Added nimble build tasks
+
+---
+
 ## Version 0.2.0 (Sep 9, 2022)
 
 - Added `pack` command
