@@ -12,10 +12,11 @@ import pkg/nimscripter/vmops
 import pkg/yaml/serialization
 from pkg/util/forFs import escapeFs
 
+import ezscr/vmProcs
+
 
 when defined release:
   import ezscr/strenc
-
   const debugging = false
 else:
   const debugging = true
@@ -25,13 +26,16 @@ when debugging:
 
 
 addVmops(buildpackModule)
+addVmProcs(buildpackModule)
 addCallable(buildpackModule):
-  proc main: bool
+  proc main(params: seq[string]): bool
 const addins = implNimscriptModule(buildpackModule)
 
-proc runNimscript(script: string): bool =
-  loadScript(NimScriptFile script).
-    invoke(main, returnType = bool)
+exportTo(readFile, writeFile)
+
+proc runNimscript(script: string; params: seq[string]): bool =
+  loadScript(NimScriptFile script, addins).
+    invoke(main, params, returnType = bool)
 
 const
   configDir {.strdefine.} = "config"
@@ -40,7 +44,7 @@ const
   packedFile {.strdefine.} = "data.enc"
   noSecret {.strdefine.} = "__NO_SECRET__"
   exampleScript = """
-proc main*: bool =
+proc main*(params: seq[string]): bool =
   ## The EzScr will run this automatically
   result = true
   echo "Script '$1' ran!"
@@ -166,7 +170,7 @@ proc packCmd: int =
     stderr.write "Config dir not exists, create it by running:\l\tezscr new newScript"
     return 1
 
-proc runCmd(scripts: seq[string]; secret = noSecret): int =
+proc runCmd(scriptAndParams: seq[string]; secret = noSecret): int =
   ## Run the specified scripts
   result = 0
   let
@@ -175,17 +179,19 @@ proc runCmd(scripts: seq[string]; secret = noSecret): int =
   if isSecret and secret != data.secret:
     stderr.write "Wrong secret"
     return 1
-  for name in scripts:
-    block thisScript:
-      for script in data.scripts:
-        if script.name == name and script.secret == isSecret:
-          if not runNimscript script.content:
-            return 1
-          break thisScript
-      stderr.write "The " &
-                    (if isSecret: "secret " else: "") &
-                      fmt"script '{name}' doesn't exists"
-      return 1
+  let name = scriptAndParams[0]
+  var params: seq[string]
+  if scriptAndParams.len > 1:
+    params = scriptAndParams[1..^1]
+  for script in data.scripts:
+    if script.name == name and script.secret == isSecret:
+      if not runNimscript(script.content, params):
+        return 1
+      return 0
+  stderr.write "The " &
+                (if isSecret: "secret " else: "") &
+                  fmt"script '{name}' doesn't exists"
+  return 1
 
 
 when isMainModule:

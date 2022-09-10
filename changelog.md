@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 1.1.0 (Sep 9, 2022)
+
+- Added `vmprocs` module that adds some missing procs in nimscript VM, like
+  - `readFile`
+  - `writeToFile`
+  - `httpGet` request
+  - `thisDir`
+
+---
+
 ## Version 1.0.0 (Sep 9, 2022)
 
 - Added `run` command
