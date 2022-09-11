@@ -11,8 +11,8 @@ proc b36f6b621036422ed69c60f642276196(s: string, key: int): string {.noinline.} 
 
 const encodedCounter = hash(CompileTime & CompileDate) and 0x7FFFFFFF
 
-proc encode*(data: string): string =
+proc encrypt*(data: string): string {.inline.} =
   b36f6b621036422ed69c60f642276196(data, encodedCounter)
 
-template decode*(data: string): string =
-  encode(data)
+template decrypt*(data: string): string =
+  encrypt(data)

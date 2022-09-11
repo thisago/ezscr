@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 2.0.0 (Sep 11, 2022)
+
+- Added to `vmprocs`
+  - `httpPost`
+- Added to request procs in `vmProcs` a parameter to set the headers
+- Added `packAndRun` command
+- [CRITICAL] Fixed script loading 3 times
+- Added static downloading that downloads the file before run the script, it can
+  download Nim files and import it
+- Implemented script alias
+
+---
+
 ## Version 1.1.0 (Sep 9, 2022)
 
 - Added `vmprocs` module that adds some missing procs in nimscript VM, like

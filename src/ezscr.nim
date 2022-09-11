@@ -1,5 +1,5 @@
 from std/os import commandLineParams, existsOrCreateDir, `/`, getAppDir,
-                    walkDirRec, splitFile, fileExists, dirExists
+                    walkDirRec, splitFile, fileExists, dirExists, removeFile
 from std/strformat import fmt
 from std/strutils import replace, `%`
 from std/tables import Table, `[]`, hasKey
@@ -13,7 +13,7 @@ import pkg/yaml/serialization
 from pkg/util/forFs import escapeFs
 
 import ezscr/vmProcs
-
+import ezscr/staticDownload
 
 when defined release:
   import ezscr/strenc
@@ -24,18 +24,25 @@ else:
 when debugging:
   from std/json import pretty
 
-
-addVmops(buildpackModule)
-addVmProcs(buildpackModule)
-addCallable(buildpackModule):
-  proc main(params: seq[string]): bool
-const addins = implNimscriptModule(buildpackModule)
-
-exportTo(readFile, writeFile)
-
 proc runNimscript(script: string; params: seq[string]): bool =
-  loadScript(NimScriptFile script, addins).
-    invoke(main, params, returnType = bool)
+  addVmops(buildpackModule)
+  addVmProcs(buildpackModule)
+  addCallable(buildpackModule):
+    proc main(params: seq[string]): bool
+  const addins = implNimscriptModule(buildpackModule)
+
+  exportTo(readFile, writeFile)
+
+  let downloadedFiles = parseStaticDownload script
+
+  try:
+    let intr = loadScript(NimScriptFile script, addins)
+    result = intr.invoke(main, params, returnType = bool)
+  except:
+    echo getCurrentExceptionMsg()
+
+  for file in downloadedFiles:
+    removeFile file
 
 const
   configDir {.strdefine.} = "config"
@@ -131,19 +138,19 @@ proc writeData(path: string; config: Data) =
   ## Writes the packed data into a file
   when not debugging:
     echo "Encoding data"
-    let data = encode $(%*config)
+    let data = encrypt $(%*config)
   else:
     echo "Writing pretty data"
     let data = pretty %*config
   path.writeFile data
 
 proc readData(path: string): Data =
-  ## Reads the packed data and decodes
+  ## Reads the packed data and decrypt
   var data = readFile path
   when not debugging:
-    data = decode data
+    data = decrypt data
   result = data.parseJson.to Data
-  
+
 
 func configFromYaml(yaml: YamlConfig): Data =
   ## Saves the yaml config into the data
@@ -184,15 +191,22 @@ proc runCmd(scriptAndParams: seq[string]; secret = noSecret): int =
   if scriptAndParams.len > 1:
     params = scriptAndParams[1..^1]
   for script in data.scripts:
-    if script.name == name and script.secret == isSecret:
-      if not runNimscript(script.content, params):
-        return 1
-      return 0
+    if script.name == name or script.alias == name:
+      if script.secret == isSecret:
+        if not runNimscript(script.content, params):
+          return 1
+        return 0
   stderr.write "The " &
                 (if isSecret: "secret " else: "") &
                   fmt"script '{name}' doesn't exists"
   return 1
 
+proc packAndRunCmd(scriptAndParams: seq[string]; secret = noSecret): int =
+  ## Packs the scripts and run
+  result = 0
+  result = packCmd()
+  if result > 0: return
+  result = runCmd(scriptAndParams, secret)
 
 when isMainModule:
   import pkg/cligen
@@ -210,4 +224,7 @@ when isMainModule:
   ], [
     runCmd,
     cmdName = "run"
+  ], [
+    packAndRunCmd,
+    cmdName = "packAndRun"
   ])

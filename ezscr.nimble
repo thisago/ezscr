@@ -1,9 +1,9 @@
 # Package
 
-version       = "1.1.0"
+version       = "2.0.0"
 author        = "Thiago Navarro"
-description   = "Easy Nimscript runner. Nim compiler not needed"
-license       = "MIT"
+description   = "Portable and easy Nimscript runner. Nim compiler not needed"
+license       = "gpl-3.0-only"
 srcDir        = "src"
 bin           = @["ezscr"]
 
