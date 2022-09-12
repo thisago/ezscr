@@ -116,7 +116,7 @@ Just download it by using this syntax:
 
 and import it, see the full example:
 
-```
+```nim
 #> staticDownload "https://raw.githubusercontent.com/thisago/util/master/src/util/forStr.nim"
 import forStr
 
