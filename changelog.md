@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 2.1.0 (Sep 12, 2022)
+
+- Fixed staticDownload error handling
+- Added info of what is doing now in `packAndRun` command
+- Fixed build tasks, added for Windows too
+- Now the `data.enc` needs to be relative to the dir where you are (not the exe)
+  This will allow the easier selection of the `data.enc` file
+- Added line breaks to all `stderr.write` calls
+- Added a task to compile the Linux and Windows version using same encoding secret
+- Added `readDataEnc` example
+
+---
+
 ## Version 2.0.0 (Sep 11, 2022)
 
 - Added to `vmprocs`

@@ -10,6 +10,8 @@ No extra binary needed
 
 The usage is very simple and there's just 3 commands!
 
+See some [examples here](examples/)
+
 ### `new`: Create new script (and setup structure)
 
 Run
@@ -138,6 +140,7 @@ Limitations:
   raise in `run` command
 - [ ] Add option to process the `main` return (bool) `false` as a raised error
   and run the script until returns true
+- [ ] Add optional custom destination fot `staticDownload` downloads
 
 ## License
 

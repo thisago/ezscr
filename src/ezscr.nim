@@ -1,4 +1,4 @@
-from std/os import commandLineParams, existsOrCreateDir, `/`, getAppDir,
+from std/os import commandLineParams, existsOrCreateDir, `/`, getCurrentDir,
                     walkDirRec, splitFile, fileExists, dirExists, removeFile
 from std/strformat import fmt
 from std/strutils import replace, `%`
@@ -25,6 +25,7 @@ when debugging:
   from std/json import pretty
 
 proc runNimscript(script: string; params: seq[string]): bool =
+  result = true
   addVmops(buildpackModule)
   addVmProcs(buildpackModule)
   addCallable(buildpackModule):
@@ -33,7 +34,13 @@ proc runNimscript(script: string; params: seq[string]): bool =
 
   exportTo(readFile, writeFile)
 
-  let downloadedFiles = parseStaticDownload script
+  var downloadedFiles: seq[string]
+
+  try:
+    downloadedFiles = parseStaticDownload script
+  except IoError:
+    stderr.write "staticDownload: " & getCurrentExceptionMsg() & "\l"
+    return false
 
   try:
     let intr = loadScript(NimScriptFile script, addins)
@@ -61,11 +68,11 @@ proc main*(params: seq[string]): bool =
 """
 
 let
-  appDir = getAppDir()
-  configDirFullPath = appDir / configDir
+  currentDir = getCurrentDir()
+  configDirFullPath = currentDir / configDir
   configFileFullPath = configDirFullPath / configFile
   secretScriptsDirFullPath = configDirFullPath / secretScriptsDir
-  packedFileFullPath = appDir / packedFile
+  packedFileFullPath = currentDir / packedFile
 
 type
   YamlConfig = object
@@ -103,7 +110,7 @@ proc newCmd(names: seq[string]; secret = false): int =
 
   for name in names:
     if name != escapeFs name:
-      stderr.write fmt"Invalid name: '{name}'"
+      stderr.write fmt"Invalid name: '{name}'{'\l'}"
       return 1
     let file =
       (if secret: secretScriptsDirFullPath else: configDirFullPath) / fmt"{name}.nims"
@@ -114,7 +121,7 @@ proc newCmd(names: seq[string]; secret = false): int =
         if secret: "true" else: "false"
       ]
     else:
-      stderr.write fmt"File {file} already exists"
+      stderr.write fmt"File {file} already exists{'\l'}"
 
 proc yamlConfig(file: string): YamlConfig =
   ## Convert the yaml to Config
@@ -146,6 +153,9 @@ proc writeData(path: string; config: Data) =
 
 proc readData(path: string): Data =
   ## Reads the packed data and decrypt
+  if not fileExists path:
+    stderr.write fmt"The file '{path}' doesn't exists{'\l'}"
+    quit 1
   var data = readFile path
   when not debugging:
     data = decrypt data
@@ -174,7 +184,7 @@ proc packCmd: int =
         data.scripts.add initScript(file, alias)
     packedFileFullPath.writeData data
   else:
-    stderr.write "Config dir not exists, create it by running:\l\tezscr new newScript"
+    stderr.write "Config dir not exists, create it by running:\l\tezscr new newScript\l"
     return 1
 
 proc runCmd(scriptAndParams: seq[string]; secret = noSecret): int =
@@ -184,7 +194,7 @@ proc runCmd(scriptAndParams: seq[string]; secret = noSecret): int =
     isSecret = secret != noSecret
     data = readData packedFileFullPath
   if isSecret and secret != data.secret:
-    stderr.write "Wrong secret"
+    stderr.write "Wrong secret{'\l'}"
     return 1
   let name = scriptAndParams[0]
   var params: seq[string]
@@ -193,19 +203,21 @@ proc runCmd(scriptAndParams: seq[string]; secret = noSecret): int =
   for script in data.scripts:
     if script.name == name or script.alias == name:
       if script.secret == isSecret:
-        if not runNimscript(script.content, params):
-          return 1
-        return 0
+        if runNimscript(script.content, params):
+          return 0
+        return 1
   stderr.write "The " &
                 (if isSecret: "secret " else: "") &
-                  fmt"script '{name}' doesn't exists"
+                  fmt"script '{name}' doesn't exists{'\l'}"
   return 1
 
 proc packAndRunCmd(scriptAndParams: seq[string]; secret = noSecret): int =
   ## Packs the scripts and run
   result = 0
+  echo "Packing..."
   result = packCmd()
   if result > 0: return
+  echo "Running..."
   result = runCmd(scriptAndParams, secret)
 
 when isMainModule:
