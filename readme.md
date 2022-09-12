@@ -141,6 +141,7 @@ Limitations:
 - [ ] Add option to process the `main` return (bool) `false` as a raised error
   and run the script until returns true
 - [ ] Add optional custom destination fot `staticDownload` downloads
+- [ ] Add possibility to import pkg modules from nimble package list
 
 ## License
 
