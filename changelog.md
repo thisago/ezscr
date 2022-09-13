@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 2.1.1 (Sep 13, 2022)
+
+- Fixed wrong secret error message
+- Fixed nimble build tasks
+
+---
+
 ## Version 2.1.0 (Sep 12, 2022)
 
 - Fixed staticDownload error handling

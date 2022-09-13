@@ -194,7 +194,7 @@ proc runCmd(scriptAndParams: seq[string]; secret = noSecret): int =
     isSecret = secret != noSecret
     data = readData packedFileFullPath
   if isSecret and secret != data.secret:
-    stderr.write "Wrong secret{'\l'}"
+    stderr.write "Wrong secret\l"
     return 1
   let name = scriptAndParams[0]
   var params: seq[string]

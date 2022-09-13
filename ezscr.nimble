@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.1.0"
+version       = "2.1.1"
 author        = "Thiago Navarro"
 description   = "Portable and easy Nimscript runner. Nim compiler not needed"
 license       = "gpl-3.0-only"
@@ -27,14 +27,13 @@ const
 
 task buildRelease, "Builds the release version":
   echo "Compiling for the current platform"
-  exec fmt"nim build_release {args}"
-  exec fmt"nim strip {binDir / bin[0]}"
-  # exec fmt"nim upx {binDir / bin[0]}"
+  exec fmt"nimble -d:danger --opt:speed {args} build"
+  exec fmt"strip {binDir / bin[0]}"
 
 task buildWinRelease, "Builds the release version for Windows":
   echo "Compiling for windows"
-  exec fmt"nim build_release win {args}"
-  exec fmt"nim strip {binDir / bin[0]}.exe"
+  exec fmt"nimble -d:danger --opt:speed -d:mingw {args} build"
+  exec fmt"strip {binDir / bin[0]}.exe"
 
 task buildAllRelease, "Builds the release version for Windows and Linux":
   buildReleaseTask()
