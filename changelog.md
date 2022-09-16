@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 3.1.1 (Sep 16, 2022)
+
+- On windows added `--app:gui`
+
+---
+
 ## Version 3.1.0 (Sep 16, 2022)
 
 - Fixed lib packing at windows compilation (dirty trick because os.`/` is buggy in cross compilation)
