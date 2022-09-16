@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 3.0.0 (Sep 16, 2022)
+
+- Packed nim std lib to work without Nim installed
+- Added 2 new commands, the `setupLib` and `cleanLib`
+
+---
+
 ## Version 2.1.1 (Sep 13, 2022)
 
 - Fixed wrong secret error message

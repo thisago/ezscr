@@ -8,7 +8,7 @@ No extra binary needed
 
 ## Usage
 
-The usage is very simple and there's just 3 commands!
+The usage is very simple and there's just 4 commands that you need to learn!
 
 See some [examples here](examples/)
 
@@ -72,6 +72,12 @@ To run a script just:
 
 ```bash
 ezscr run helloWorld
+```
+
+## `cleanLib`: Delete all the lib created (in temp)
+
+```bash
+ezscr clean_lib
 ```
 
 ## Features

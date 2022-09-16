@@ -1,8 +1,9 @@
 from std/os import commandLineParams, existsOrCreateDir, `/`, getCurrentDir,
-                    walkDirRec, splitFile, fileExists, dirExists, removeFile
+                    walkDirRec, splitFile, fileExists, dirExists, removeFile,
+                    getTempDir, parentDir, createDir, removeDir
 from std/strformat import fmt
 from std/strutils import replace, `%`
-from std/tables import Table, `[]`, hasKey
+from std/tables import Table, `[]`, hasKey, pairs
 from std/json import `$`, `%`, `%*`, parseJson, to
 from std/streams import newFileStream, close
 import std/with
@@ -13,8 +14,8 @@ import pkg/yaml/serialization
 from pkg/util/forFs import escapeFs
 
 import ezscr/vmProcs
-import ezscr/vmStd
 import ezscr/staticDownload
+import ezscr/nimlib
 
 when defined release:
   import ezscr/strenc
@@ -25,40 +26,13 @@ else:
 when debugging:
   from std/json import pretty
 
-proc runNimscript(script: string; params: seq[string]): bool =
-  result = true
-  addVmops(buildpackModule)
-  addVmProcs(buildpackModule)
-  addVmStd(buildpackModule)
-  addCallable(buildpackModule):
-    proc main(params: seq[string]): bool
-  const addins = implNimscriptModule(buildpackModule)
-
-  exportTo(readFile, writeFile)
-
-  var downloadedFiles: seq[string]
-
-  try:
-    downloadedFiles = parseStaticDownload script
-  except IoError:
-    stderr.write "staticDownload: " & getCurrentExceptionMsg() & "\l"
-    return false
-
-  try:
-    let intr = loadScript(NimScriptFile script, addins)
-    result = intr.invoke(main, params, returnType = bool)
-  except:
-    echo getCurrentExceptionMsg()
-
-  for file in downloadedFiles:
-    removeFile file
-
 const
   configDir {.strdefine.} = "config"
   secretScriptsDir {.strdefine.} = "secret"
   configFile {.strdefine.} = "config.yaml"
   packedFile {.strdefine.} = "data.enc"
   noSecret {.strdefine.} = "__NO_SECRET__"
+  libDir {.strdefine.} = getTempDir() / "ezscr"
   exampleScript = """
 proc main*(params: seq[string]): bool =
   ## The EzScr will run this automatically
@@ -75,6 +49,40 @@ let
   configFileFullPath = configDirFullPath / configFile
   secretScriptsDirFullPath = configDirFullPath / secretScriptsDir
   packedFileFullPath = currentDir / packedFile
+  nimStdLibDir = libDir / "nim"
+
+
+proc runNimscript(script: string; params: seq[string]): bool =
+  result = true
+  addVmops(buildpackModule)
+  addVmProcs(buildpackModule)
+  addCallable(buildpackModule):
+    proc main(params: seq[string]): bool
+  const addins = implNimscriptModule(buildpackModule)
+
+  exportTo(readFile, writeFile)
+
+  var downloadedFiles: seq[string]
+
+  try:
+    downloadedFiles = parseStaticDownload script
+  except IoError:
+    stderr.write "staticDownload: " & getCurrentExceptionMsg() & "\l"
+    return false
+
+  try:
+    let intr = loadScript(
+      NimScriptFile script,
+      addins,
+      stdPath = nimStdLibDir
+    )
+    result = intr.invoke(main, params, returnType = bool)
+  except:
+    echo getCurrentExceptionMsg()
+
+  for file in downloadedFiles:
+    removeFile file
+
 
 type
   YamlConfig = object
@@ -189,9 +197,38 @@ proc packCmd: int =
     stderr.write "Config dir not exists, create it by running:\l\tezscr new newScript\l"
     return 1
 
+const nimStdLib = readNimLib()
+
+proc writeFileRec(file, content: string) =
+  createDir(file.parentDir)
+  file.writeFile content
+
+proc setupLibCmd(): int =
+  ## setup the lib
+  result = 0
+  if dirExists libDir:
+    stderr.write "The lib already exists\l"
+    return 1
+  echo "Writing Nim Std lib"
+  for (module, content) in nimStdLib.pairs:
+    writeFileRec(nimStdLibDir / module, content)
+
+proc cleanLibCmd(): int =
+  ## clean the lib
+  result = 0
+  if not dirExists libDir:
+    stderr.write "The lib not exists\l"
+    return 1
+  echo "Deleting the lib"
+  removeDir libDir
+
 proc runCmd(scriptAndParams: seq[string]; secret = noSecret): int =
   ## Run the specified scripts
   result = 0
+  if not dirExists libDir:
+    if setupLibCmd() != 0:
+      stderr.write "Cannot setup lib"
+      return 1
   let
     isSecret = secret != noSecret
     data = readData packedFileFullPath
@@ -241,4 +278,10 @@ when isMainModule:
   ], [
     packAndRunCmd,
     cmdName = "packAndRun"
+  ], [
+    setupLibCmd,
+    cmdName = "setupLib"
+  ], [
+    cleanLibCmd,
+    cmdName = "cleanLib"
   ])
