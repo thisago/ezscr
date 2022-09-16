@@ -13,6 +13,7 @@ import pkg/yaml/serialization
 from pkg/util/forFs import escapeFs
 
 import ezscr/vmProcs
+import ezscr/vmStd
 import ezscr/staticDownload
 
 when defined release:
@@ -28,6 +29,7 @@ proc runNimscript(script: string; params: seq[string]): bool =
   result = true
   addVmops(buildpackModule)
   addVmProcs(buildpackModule)
+  addVmStd(buildpackModule)
   addCallable(buildpackModule):
     proc main(params: seq[string]): bool
   const addins = implNimscriptModule(buildpackModule)
