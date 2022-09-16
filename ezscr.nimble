@@ -12,6 +12,7 @@ binDir = "build"
 # Dependencies
 
 requires "nim >= 1.6.4"
+requires "fusion"
 requires "nimscripter"
 requires "cligen"
 requires "yaml"
@@ -26,11 +27,9 @@ const
   args = fmt"-d:encodedCounter={encodedCounter}"
 
 task buildRelease, "Builds the release version":
-  echo "Compiling x64 for the current platform"
+  echo "Compiling for the current platform"
   exec fmt"nimble -d:danger --opt:speed {args} build"
   exec fmt"strip {binDir / bin[0]}"
-  withDir binDir:
-    mvFile bin[0], fmt"{bin[0]}_x64"
 
 task buildWinRelease, "Builds the release version for Windows":
   echo "Compiling x64 for windows"

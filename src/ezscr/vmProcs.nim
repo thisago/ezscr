@@ -52,7 +52,6 @@ proc downloadTo*(url, destination: string): string =
   close client
 
 
-
 template addVmProcs*(module: untyped) =
   exportTo(module,
     readFile,
