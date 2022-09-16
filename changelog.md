@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 3.1.0 (Sep 16, 2022)
+
+- Fixed lib packing at windows compilation (dirty trick because os.`/` is buggy in cross compilation)
+
+---
+
 ## Version 3.0.0 (Sep 16, 2022)
 
 - Packed nim std lib to work without Nim installed

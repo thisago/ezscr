@@ -27,7 +27,7 @@ const
   args = fmt"-d:encodedCounter={encodedCounter}"
 
 let
-  nimLibPath = "~/.choosenim/pkgs/nim-#head/lib/" # **PLACE HERE YOU NIM LIB DIR**
+  nimLibPath = "/data/os/config/.choosenim/toolchains/nim-#head/lib/" # **PLACE HERE YOU NIM LIB DIR**
   winArgs = fmt"-d:stdLibPath={nimLibPath}"
 
 task buildRelease, "Builds the release version":
