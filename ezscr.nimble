@@ -3,7 +3,7 @@
 version       = "3.1.1"
 author        = "Thiago Navarro"
 description   = "Portable and easy Nimscript runner. Nim compiler not needed"
-license       = "gpl-3.0-only"
+license       = "mit"
 srcDir        = "src"
 bin           = @["ezscr"]
 
