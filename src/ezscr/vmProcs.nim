@@ -2,7 +2,8 @@
 from std/httpclient import newHttpClient, close, get, body, code, newHttpHeaders,
                             post, downloadFile, HttpRequestError,
                             newMultipartData, `[]=`
-from std/os import getAppDir
+from std/os import getAppDir, removeFile, removeDir, createDir, getEnv, putEnv,
+  existsEnv, delEnv
 
 from ezscr/strenc import nil
 
@@ -31,18 +32,29 @@ proc httpPost(
   result.code = int res.code
   result.body = res.body
 
-proc httpPostFile(
-  url, inputName, mime, filename, content: string;
+type PostFile = tuple
+  inputName, filename, mimeType, content: string
+
+proc httpPostFiles(
+  url: string;
+  files: seq[PostFile];
   headers = newSeq[(string, string)]()
 ): tuple[code: int; body: string] =
   var data = newMultipartData()
-  data[inputName] = (filename, mime, content)
+  for (inputName, filename, mimeType, content) in files:
+    data[inputName] = (filename, mimeType, content)
   let
     client = newHttpClient(headers = newHttpHeaders headers)
     res = client.post(url, multipart = data)
   close client
   result.code = int res.code
   result.body = res.body
+
+when isMainModule and false:
+  echo httpPostFiles("http://httpbin.org/post", [
+    ("test", "test/test", "test.txt", "content"),
+    ("uid", "", "", "test")
+  ]).body
 
 proc thisDir: string =
   getAppDir()
@@ -76,5 +88,13 @@ template addVmProcs*(module: untyped) =
     encrypt,
     decrypt,
     downloadTo,
-    httpPostFile
+    httpPostFiles,
+    PostFile,
+    removeFile,
+    removeDir,
+    createDir,
+    getEnv,
+    putEnv,
+    existsEnv,
+    delEnv
   )

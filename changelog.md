@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 3.3.0 (Sep 22, 2022)
+
+- Added a proc to upload file via POST
+- Exported some missing os procs
+
+---
+
 ## Version 3.2.0 (Sep 22, 2022)
 
 - Added a proc to upload file via POST
