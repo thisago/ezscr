@@ -1,6 +1,7 @@
 ## Add docs for this procs
 from std/httpclient import newHttpClient, close, get, body, code, newHttpHeaders,
-                            post, downloadFile, HttpRequestError
+                            post, downloadFile, HttpRequestError,
+                            newMultipartData, `[]=`
 from std/os import getAppDir
 
 from ezscr/strenc import nil
@@ -26,6 +27,19 @@ proc httpPost(
   let
     client = newHttpClient(headers = newHttpHeaders headers)
     res = client.post(url, body)
+  close client
+  result.code = int res.code
+  result.body = res.body
+
+proc httpPostFile(
+  url, inputName, mime, filename, content: string;
+  headers = newSeq[(string, string)]()
+): tuple[code: int; body: string] =
+  var data = newMultipartData()
+  data[inputName] = (filename, mime, content)
+  let
+    client = newHttpClient(headers = newHttpHeaders headers)
+    res = client.post(url, multipart = data)
   close client
   result.code = int res.code
   result.body = res.body
@@ -61,5 +75,6 @@ template addVmProcs*(module: untyped) =
     httpPost,
     encrypt,
     decrypt,
-    downloadTo
+    downloadTo,
+    httpPostFile
   )

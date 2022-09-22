@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 3.2.0 (Sep 22, 2022)
+
+- Added a proc to upload file via POST
+
+---
+
 ## Version 3.1.1 (Sep 16, 2022)
 
 - On windows added `--app:gui`
