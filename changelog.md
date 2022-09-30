@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 3.4.0 (Sep 30, 2022)
+
+- Added `execProc` and `execDaemonProc` functions to start a process
+
+---
+
 ## Version 3.3.1 (Sep 28, 2022)
 
 - fixed `--app:gui` arg

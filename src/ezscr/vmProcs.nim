@@ -4,6 +4,9 @@ from std/httpclient import newHttpClient, close, get, body, code, newHttpHeaders
                             newMultipartData, `[]=`
 from std/os import getAppDir, removeFile, removeDir, createDir, getEnv, putEnv,
   existsEnv, delEnv
+from std/strutils import join
+import std/osproc except execProcess
+import std/strtabs
 
 from ezscr/strenc import nil
 
@@ -77,6 +80,42 @@ proc downloadTo*(url, destination: string): string =
     result = getCurrentExceptionMsg()
   close client
 
+proc execProc(
+  command: string;
+  workingDir = "";
+  args = newSeq[string]();
+  env: seq[(string, string)] = newSeq[(string, string)]();
+  options: set[ProcessOption] = {poStdErrToStdOut, poUsePath, poEvalCommand};
+  wait = false
+): (string, int) =
+  var process = startProcess(
+    command,
+    workingDir = workingDir,
+    args = args,
+    env = newStringTable env,
+    options = options
+  )
+  if wait or poDaemon notin options:
+    let res = process.readLines
+    result = (res[0].join "\l", res[1])
+    close process
+  else:
+    result = ("**Ran as daemon**", 0)
+
+proc execDaemonProc(
+  command: string;
+  workingDir = "";
+  env: seq[(string, string)] = newSeq[(string, string)]();
+  wait = false
+): (string, int) =
+  result = execProc(
+    command,
+    workingDir,
+    @[],
+    env,
+    {poStdErrToStdOut, poUsePath, poEvalCommand, poDaemon},
+    wait
+  )
 
 template addVmProcs*(module: untyped) =
   exportTo(module,
@@ -96,5 +135,8 @@ template addVmProcs*(module: untyped) =
     getEnv,
     putEnv,
     existsEnv,
-    delEnv
+    delEnv,
+    execProc,
+    execDaemonProc,
+    ProcessOption
   )

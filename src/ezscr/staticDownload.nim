@@ -37,5 +37,5 @@ proc parseStaticDownload*(script: string): seq[string] =
         if error.len == 0:
           result.add destination
         else:
-          raise newException(IoError, fmt"Download error: '{error}' when downloading file: '{url}'")
+          raise newException(IOError, fmt"Download error: '{error}' when downloading file: '{url}'")
           
