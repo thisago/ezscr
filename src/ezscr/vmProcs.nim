@@ -88,11 +88,12 @@ proc execProc(
   options: set[ProcessOption] = {poStdErrToStdOut, poUsePath, poEvalCommand};
   wait = false
 ): (string, int) =
+  let envTable = if env.len == 0: nil else: newStringTable env
   var process = startProcess(
     command,
     workingDir = workingDir,
     args = args,
-    env = newStringTable env,
+    env = envTable,
     options = options
   )
   if wait or poDaemon notin options:

@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 3.4.1 (Oct 14, 2022)
+
+- Fixed `execProc` and `execDaemonProc`
+
+---
+
 ## Version 3.4.0 (Sep 30, 2022)
 
 - Added `execProc` and `execDaemonProc` functions to start a process
