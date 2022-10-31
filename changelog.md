@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 4.0.1 (Oct 31, 2022)
+
+- Removed `--app:gui` in order to show echoed text
+
+---
+
+## Version 4.0.0 (Oct 31, 2022)
+
+- Added exported procs as lib
+
+---
+
 ## Version 3.4.1 (Oct 14, 2022)
 
 - Fixed `execProc` and `execDaemonProc`

@@ -1,12 +1,12 @@
 # Package
 
-version       = "3.4.1"
+version       = "4.0.1"
 author        = "Thiago Navarro"
 description   = "Portable and easy Nimscript runner. Nim compiler not needed"
 license       = "mit"
 srcDir        = "src"
 bin           = @["ezscr"]
-
+installExt = @["nim"]
 binDir = "build"
 
 # Dependencies
@@ -24,6 +24,8 @@ from std/hashes import hash
 const
   encodedCounter = hash(CompileTime & CompileDate) and 0x7FFFFFFF
   args = fmt"-d:encodedCounter={encodedCounter}"
+
+echo fmt"{encodedCounter=}"
 
 let
   nimLibPath = "/data/os/config/.choosenim/toolchains/nim-#head/lib/" # **PLACE HERE YOU NIM LIB DIR**

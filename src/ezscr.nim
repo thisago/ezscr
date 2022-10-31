@@ -52,7 +52,7 @@ let
   nimStdLibDir = libDir / "nim"
 
 
-proc runNimscript(script: string; params: seq[string]): bool =
+proc runNimscript*(script: string; params = newSeq[string]()): bool =
   result = true
   addVmops(buildpackModule)
   addVmProcs(buildpackModule)
@@ -105,7 +105,7 @@ proc writeBlankConfig(file: string) =
     `=`content.replace("aliases: ", "aliases: \l  testScript: newName")
   file.writeFile content & "\l"
 
-proc newCmd(names: seq[string]; secret = false): int =
+proc newCmd*(names: seq[string]; secret = false): int =
   ## Creates a new script files
   result = 0
   block setupStructure:
@@ -176,7 +176,7 @@ func configFromYaml(yaml: YamlConfig): Data =
   ## Saves the yaml config into the data
   result.secret = yaml.secret
 
-proc packCmd: int =
+proc packCmd*: int =
   ## Get all scripts and packs into a encrypted data file
   result = 0
   if dirExists configDirFullPath:
@@ -203,7 +203,7 @@ proc writeFileRec(file, content: string) =
   createDir(file.parentDir)
   file.writeFile content
 
-proc setupLibCmd(): int =
+proc setupLibCmd*(): int =
   ## setup the lib
   result = 0
   if dirExists libDir:
@@ -222,7 +222,7 @@ proc cleanLibCmd(): int =
   echo "Deleting the lib"
   removeDir libDir
 
-proc runCmd(scriptAndParams: seq[string]; secret = noSecret): int =
+proc runCmd*(scriptAndParams: seq[string]; secret = noSecret): int =
   ## Run the specified scripts
   result = 0
   if not dirExists libDir:
@@ -250,7 +250,7 @@ proc runCmd(scriptAndParams: seq[string]; secret = noSecret): int =
                   fmt"script '{name}' doesn't exists{'\l'}"
   return 1
 
-proc packAndRunCmd(scriptAndParams: seq[string]; secret = noSecret): int =
+proc packAndRunCmd*(scriptAndParams: seq[string]; secret = noSecret): int =
   ## Packs the scripts and run
   result = 0
   echo "Packing..."
@@ -285,3 +285,25 @@ when isMainModule:
     cleanLibCmd,
     cmdName = "cleanLib"
   ])
+
+
+# Lib
+
+proc setupNimLib*: bool =
+  ## Setup the Nim lib (API only)
+  ## 
+  ## Returns false if already exists
+  result = true
+  if dirExists libDir:
+    return false
+  for (module, content) in nimStdLib.pairs:
+    writeFileRec(nimStdLibDir / module, content)
+
+proc cleanNimLib*: bool =
+  ## Clean the Nim lib (API only)
+  ## 
+  ## Returns false if not exists
+  result = true
+  if not dirExists libDir:
+    return false
+  removeDir libDir
