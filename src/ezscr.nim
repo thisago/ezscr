@@ -32,7 +32,7 @@ const
   configFile {.strdefine.} = "config.yaml"
   packedFile {.strdefine.} = "data.enc"
   noSecret {.strdefine.} = "__NO_SECRET__"
-  libDir {.strdefine.} = getTempDir() / "ezscr"
+  libDirName {.strdefine.} = "ezscr"
   exampleScript = """
 proc main*(params: seq[string]): bool =
   ## The EzScr will run this automatically
@@ -43,13 +43,16 @@ proc main*(params: seq[string]): bool =
     echo "It's secret! Shhh"
 """
 
+
 let
+  libDir = getTempDir() / libDirName
   currentDir = getCurrentDir()
   configDirFullPath = currentDir / configDir
   configFileFullPath = configDirFullPath / configFile
   secretScriptsDirFullPath = configDirFullPath / secretScriptsDir
   packedFileFullPath = currentDir / packedFile
   nimStdLibDir = libDir / "nim"
+
 
 
 proc runNimscript*(script: string; params = newSeq[string]()): bool =
@@ -207,11 +210,15 @@ proc setupLibCmd*(): int =
   ## setup the lib
   result = 0
   if dirExists libDir:
-    stderr.write "The lib already exists\l"
+    stderr.write fmt"The lib already exists in {nimStdLibDir}{'\l'}"
     return 1
-  echo "Writing Nim Std lib"
-  for (module, content) in nimStdLib.pairs:
-    writeFileRec(nimStdLibDir / module, content)
+  echo fmt"Writing Nim Std lib to {nimStdLibDir}"
+  try:
+    for (module, content) in nimStdLib.pairs:
+      writeFileRec(nimStdLibDir / module, content)
+  except IOError:
+    stderr.write fmt"Error: {getCurrentExceptionMsg()}"
+    return 1
 
 proc cleanLibCmd(): int =
   ## clean the lib

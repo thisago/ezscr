@@ -141,7 +141,8 @@ Limitations:
 ## TODO
 
 - [ ] Add possibility to add multiple aliases to same script
-- [ ] Add a possibility to reuse same encryption key (instead compilation time), maybe provide in nimble file
+- [ ] Add a possibility to reuse same encryption key (instead compilation time),
+  maybe provide in nimble file
 - [ ] Add option to run again x times until the raised exception stop to be
   raise in `run` command
 - [ ] Add option to process the `main` return (bool) `false` as a raised error

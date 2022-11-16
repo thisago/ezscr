@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 4.0.2 (Nov 16, 2022)
+
+- Fixed temp getting to runtime
+- Added info where nim lib was placed
+
+---
+
 ## Version 4.0.1 (Oct 31, 2022)
 
 - Removed `--app:gui` in order to show echoed text
