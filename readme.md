@@ -6,6 +6,15 @@ With this tool, you can bundle a lot of scripts and run it everywhere
 
 No extra binary needed
 
+## Installation
+
+First install [Nim](https://nim-lang.org), then run:
+```bash
+nimble install ezscr
+```
+And the command `ezscr` will be available in your terminal. (Make sure that
+Nimble bin dir is on your PATH)
+
 ## Usage
 
 The usage is very simple and there's just 4 commands that you need to learn!
