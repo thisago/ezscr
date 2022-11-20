@@ -1,6 +1,6 @@
 # Package
 
-version       = "4.0.2"
+version       = "4.1.0"
 author        = "Thiago Navarro"
 description   = "Portable and easy Nimscript runner. Nim compiler not needed"
 license       = "mit"

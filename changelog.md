@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 4.1.0 (Sun Nov 20, 2022)
+
+- Replaced `std.getEnv` to `util.getEnv`
+
+---
+
 ## Version 4.0.2 (Nov 16, 2022)
 
 - Fixed temp getting to runtime

@@ -2,13 +2,15 @@
 from std/httpclient import newHttpClient, close, get, body, code, newHttpHeaders,
                             post, downloadFile, HttpRequestError,
                             newMultipartData, `[]=`
-from std/os import getAppDir, removeFile, removeDir, createDir, getEnv, putEnv,
+from std/os import getAppDir, removeFile, removeDir, createDir, putEnv,
   existsEnv, delEnv
 from std/strutils import join
 import std/osproc except execProcess
 import std/strtabs
 
 from ezscr/strenc import nil
+
+from pkg/util/forOs import getEnv
 
 proc writeToFile(file, content: string) =
   writeFile(file, content)
