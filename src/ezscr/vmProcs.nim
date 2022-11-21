@@ -10,7 +10,8 @@ import std/strtabs
 
 from ezscr/strenc import nil
 
-from pkg/util/forOs import getEnv
+# from pkg/util/forOs import getEnv
+from std/os import getEnv
 
 proc writeToFile(file, content: string) =
   writeFile(file, content)
@@ -45,6 +46,7 @@ proc httpPostFiles(
   files: seq[PostFile];
   headers = newSeq[(string, string)]()
 ): tuple[code: int; body: string] =
+  ## To send POST paremeters, just fill a `PostFile` without `filename` and `mimeType`
   var data = newMultipartData()
   for (inputName, filename, mimeType, content) in files:
     data[inputName] = (filename, mimeType, content)
@@ -54,12 +56,6 @@ proc httpPostFiles(
   close client
   result.code = int res.code
   result.body = res.body
-
-when isMainModule and false:
-  echo httpPostFiles("http://httpbin.org/post", [
-    ("test", "test/test", "test.txt", "content"),
-    ("uid", "", "", "test")
-  ]).body
 
 proc thisDir: string =
   getAppDir()

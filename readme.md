@@ -134,7 +134,7 @@ Just download it by using this syntax:
 and import it, see the full example:
 
 ```nim
-#> staticDownload "https://raw.githubusercontent.com/thisago/util/master/src/util/forStr.nim"
+#> staticDownload "https://git.ozzuu.com/thisago/util/raw/branch/master/src/util/forStr.nim"
 import forStr
 
 proc main*(params: seq[string]): bool =
@@ -158,6 +158,8 @@ Limitations:
   and run the script until returns true
 - [ ] Add optional custom destination fot `staticDownload` downloads
 - [ ] Add possibility to import pkg modules from nimble package list
+- [ ] Add listed and unlisted scripts (now all is unlisted)
+- [ ] Add `--help` in scripts, extract from `main` proc doc comment
 
 ## License
 

@@ -21,7 +21,7 @@ proc parseStaticDownload*(script: string): seq[string] =
   ## Example:
   ## .. code-block::
   ##   # Note the mandatory space after `>`
-  ##   #> staticDownload "https://raw.githubusercontent.com/thisago/util/master/src/util/forStr.nim"
+  ##   #> staticDownload "https://git.ozzuu.com/thisago/util/raw/branch/master/src/util/forStr.nim"
   ##   import forStr
   ##
   ##   proc main*(params: seq[string]): bool =
