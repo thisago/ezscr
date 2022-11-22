@@ -160,6 +160,11 @@ Limitations:
 - [ ] Add possibility to import pkg modules from nimble package list
 - [ ] Add listed and unlisted scripts (now all is unlisted)
 - [ ] Add `--help` in scripts, extract from `main` proc doc comment
+- [ ] Add static files in config to pack it and with a internal proc call,
+  access the file
+- [ ] Add a lib extension file like `config/lib.nim` to add more internal procs
+  to the Nimscript scope, adding procs that cannot be ran in Nimscript, like ddl
+  handling
 
 ## License
 
