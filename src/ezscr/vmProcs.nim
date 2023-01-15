@@ -6,6 +6,7 @@ from std/os import getAppDir, removeFile, removeDir, createDir, putEnv,
   existsEnv, delEnv
 from std/strutils import join
 import std/osproc except execProcess
+from std/sha1 import secureHashFile, secureHash, `$`
 import std/strtabs
 
 from ezscr/strenc import nil
@@ -18,10 +19,11 @@ proc writeToFile(file, content: string) =
 
 proc httpGet(
   url: string;
-  headers = newSeq[(string, string)]()
+  headers = newSeq[(string, string)]();
+  timeout = -1
 ): tuple[code: int; body: string] =
   let
-    client = newHttpClient(headers = newHttpHeaders headers)
+    client = newHttpClient(timeout = timeout, headers = newHttpHeaders headers)
     res = client.get url
   close client
   result.code = int res.code
@@ -29,10 +31,11 @@ proc httpGet(
 
 proc httpPost(
   url, body: string;
-  headers = newSeq[(string, string)]()
+  headers = newSeq[(string, string)]();
+  timeout = -1
 ): tuple[code: int; body: string] =
   let
-    client = newHttpClient(headers = newHttpHeaders headers)
+    client = newHttpClient(timeout = timeout, headers = newHttpHeaders headers)
     res = client.post(url, body)
   close client
   result.code = int res.code
@@ -116,6 +119,11 @@ proc execDaemonProc(
     wait
   )
 
+proc sha1(s: string): string =
+  $secureHash s
+proc sha1File(file: string): string =
+  $secureHashFile file
+
 template addVmProcs*(module: untyped) =
   exportTo(module,
     readFile,
@@ -137,5 +145,7 @@ template addVmProcs*(module: untyped) =
     delEnv,
     execProc,
     execDaemonProc,
-    ProcessOption
+    ProcessOption,
+    sha1File,
+    sha1
   )

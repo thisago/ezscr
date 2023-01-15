@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 4.3.0 (Sun 15 Jan 2023)
+
+- Added Added sha1 hash exports
+
+---
+
+## Version 4.2.0 (Thu 12 Jan 2023)
+
+- Added configurable timeout to `httpGet` and `httpPost`
+
+---
+
 ## Version 4.1.0 (Sun Nov 20, 2022)
 
 - Replaced `std.getEnv` to `util.getEnv`
